@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja TI | Tecnologia</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <section class="produtos" id="produtos">
+        <h2>Nossos produtos</h2>
+        <p class="subtitulo">Confira alguns dos nossos destaques.</p>
+
+        <div class="lista-produtos">
+
+            <div class="produto">
+                <img src="notebook.jpg"
+                     alt="Notebook" class="foto-produto">
+                <h3>Notebook</h3>
+                <p>Ideal para estudos e trabalho.</p>
+                <span>R$ 2.499,90</span>
+            </div>
+
+            <div class="produto">
+                <img src="headset.jpg"
+                     alt="Headset Gamer" class="foto-produto">
+                <h3>Headset Gamer</h3>
+                <p>Mais conforto para jogar.</p>
+                <span>R$ 199,90</span>
+            </div>
+
+            <div class="produto">
+                <img src="teclado.jpg"
+                     alt="Teclado Mecânico" class="foto-produto">
+                <h3>Teclado Mecânico</h3>
+                <p>Precisão para sua rotina.</p>
+                <span>R$ 249,90</span>
+            </div>
+
+            <div class="produto">
+                <img src="mouse.jpg"
+                     alt="Mouse Gamer" class="foto-produto">
+                <h3>Mouse Gamer</h3>
+                <p>Desempenho e praticidade.</p>
+                <span>R$ 129,90</span>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="cadastro" id="cadastro">
+
+        <div class="cadastro-info">
+            <p class="destaque">FAÇA SEU CADASTRO</p>
+            <h2>Faça parte da<br>Loja TI!</h2>
+            <p>Preencha seus dados para cadastrar um cliente em nosso sistema.</p>
+        </div>
+
+        <form id="formCliente">
+            <h2>Cadastro de cliente</h2>
+
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" name="nome"
+                   placeholder="Digite seu nome" required>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email"
+                   placeholder="Digite seu e-mail" required>
+
+            <label for="telefone">Telefone</label>
+            <input type="tel" id="telefone" name="telefone"
+                   placeholder="Digite seu telefone" required>
+
+            <label for="endereco">Endereço</label>
+            <input type="text" id="endereco" name="endereco"
+                   placeholder="Digite seu endereço" required>
+
+            <button type="submit">Cadastrar cliente</button>
+
+            <p id="mensagem"></p>
+        </form>
+
+    </section>
+
+    <footer>
+        <h2>LojaTI</h2>
+        <p>Tecnologia, qualidade e inovação.</p>
+    </footer>
+
+    <script>
+        const api = "http://localhost/lojaTI/back/index.php";
+
+        const formulario = document.getElementById("formCliente");
+        const mensagem = document.getElementById("mensagem");
+
+        // Cadastrar cliente
+        formulario.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            mensagem.textContent = "Cadastrando cliente...";
+            mensagem.className = "";
+
+            const dados = new FormData(formulario);
+
+            try {
+                const resposta = await fetch(
+                    api + "?rota=clientes/create",
+                    {
+                        method: "POST",
+                        body: dados
+                    }
+                );
+
+                const texto = await resposta.text();
+
+                let resultado;
+
+                try {
+                    resultado = JSON.parse(texto);
+                } catch (erro) {
+                    console.error("Resposta do PHP:", texto);
+                    throw new Error(
+                        "Resposta inválida do PHP. Confira o Console com F12."
+                    );
+                }
+
+                if (!resposta.ok || resultado.erro) {
+                    throw new Error(
+                        resultado.erro || "Erro ao cadastrar cliente."
+                    );
+                }
+
+                mensagem.textContent =
+                    resultado.mensagem || "Cliente cadastrado com sucesso!";
+
+                mensagem.className = "sucesso";
+
+                formulario.reset();
+
+            } catch (erro) {
+                mensagem.textContent = "Erro: " + erro.message;
+                mensagem.className = "falha";
+
+                console.error(erro);
+            }
+        });
+    </script>
+
+</body>
+</html>
+ 
